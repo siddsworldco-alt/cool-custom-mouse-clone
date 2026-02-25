@@ -73,7 +73,7 @@
   }
 
   .project-card {
-    @apply relative overflow-hidden group;
+    @apply relative overflow-hidden;
   }
   .project-card img {
     @apply w-full h-full object-cover transition-transform duration-700 ease-out;
@@ -82,7 +82,10 @@
     @apply scale-105;
   }
   .project-card-overlay {
-    @apply absolute inset-0 bg-background/60 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-6 md:p-8;
+    @apply absolute inset-0 bg-background/60 opacity-0 transition-opacity duration-500 flex flex-col justify-end p-6;
+  }
+  .project-card:hover .project-card-overlay {
+    @apply opacity-100;
   }
 
   .marquee-track {
