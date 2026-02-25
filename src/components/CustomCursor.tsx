@@ -3,7 +3,9 @@ import { useEffect, useRef, useState } from "react";
 const CustomCursor = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
   const cursorDotRef = useRef<HTMLDivElement>(null);
+  const cursorTextRef = useRef<HTMLSpanElement>(null);
   const [isHovering, setIsHovering] = useState(false);
+  const [isProject, setIsProject] = useState(false);
   const position = useRef({ x: 0, y: 0 });
   const smoothPosition = useRef({ x: 0, y: 0 });
 
@@ -18,15 +20,19 @@ const CustomCursor = () => {
 
     const handleMouseOver = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
-      if (
+      if (target.closest(".project-card")) {
+        setIsHovering(true);
+        setIsProject(true);
+      } else if (
         target.closest("a") ||
         target.closest("button") ||
-        target.closest(".project-card") ||
         target.closest("[data-cursor-hover]")
       ) {
         setIsHovering(true);
+        setIsProject(false);
       } else {
         setIsHovering(false);
+        setIsProject(false);
       }
     };
 
@@ -52,19 +58,42 @@ const CustomCursor = () => {
     };
   }, []);
 
+  const size = isProject
+    ? "var(--cursor-size-hover)"
+    : isHovering
+    ? "var(--cursor-size-hover)"
+    : "var(--cursor-size)";
+
   return (
     <>
       <div
         ref={cursorRef}
-        className="fixed pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 border border-foreground/50 rounded-full transition-[width,height] duration-300 ease-out mix-blend-difference"
+        className="fixed pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 rounded-full transition-[width,height,background-color,border-color] duration-300 ease-out flex items-center justify-center"
         style={{
-          width: isHovering ? "var(--cursor-size-hover)" : "var(--cursor-size)",
-          height: isHovering ? "var(--cursor-size-hover)" : "var(--cursor-size)",
+          width: size,
+          height: size,
+          backgroundColor: isProject ? "hsl(0 0% 95% / 0.9)" : "transparent",
+          border: isProject ? "none" : "1px solid hsl(0 0% 95% / 0.5)",
+          mixBlendMode: isProject ? "difference" : "difference",
         }}
-      />
+      >
+        <span
+          ref={cursorTextRef}
+          className="text-xs font-body tracking-[0.15em] uppercase transition-opacity duration-300 select-none"
+          style={{
+            opacity: isProject ? 1 : 0,
+            color: "hsl(0 0% 5%)",
+            fontSize: "11px",
+            fontWeight: 500,
+          }}
+        >
+          VIEW
+        </span>
+      </div>
       <div
         ref={cursorDotRef}
-        className="fixed pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 w-1 h-1 bg-foreground rounded-full"
+        className="fixed pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-foreground rounded-full transition-opacity duration-300"
+        style={{ opacity: isProject ? 0 : 1 }}
       />
     </>
   );
