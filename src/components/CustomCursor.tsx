@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from "react";
 const CustomCursor = () => {
   const cursorRef = useRef<HTMLDivElement>(null);
   const cursorDotRef = useRef<HTMLDivElement>(null);
-  const cursorTextRef = useRef<HTMLSpanElement>(null);
   const [isHovering, setIsHovering] = useState(false);
   const [isProject, setIsProject] = useState(false);
   const position = useRef({ x: 0, y: 0 });
@@ -38,8 +37,9 @@ const CustomCursor = () => {
 
     let animationId: number;
     const animate = () => {
-      smoothPosition.current.x += (position.current.x - smoothPosition.current.x) * 0.12;
-      smoothPosition.current.y += (position.current.y - smoothPosition.current.y) * 0.12;
+      const ease = isProject ? 0.08 : 0.15;
+      smoothPosition.current.x += (position.current.x - smoothPosition.current.x) * ease;
+      smoothPosition.current.y += (position.current.y - smoothPosition.current.y) * ease;
       if (cursorRef.current) {
         cursorRef.current.style.left = `${smoothPosition.current.x}px`;
         cursorRef.current.style.top = `${smoothPosition.current.y}px`;
@@ -56,44 +56,48 @@ const CustomCursor = () => {
       document.removeEventListener("mouseover", handleMouseOver);
       cancelAnimationFrame(animationId);
     };
-  }, []);
+  }, [isProject]);
 
-  const size = isProject
-    ? "var(--cursor-size-hover)"
-    : isHovering
-    ? "var(--cursor-size-hover)"
-    : "var(--cursor-size)";
+  const cursorSize = isProject ? 100 : isHovering ? 60 : 12;
 
   return (
     <>
+      {/* Main trailing circle */}
       <div
         ref={cursorRef}
-        className="fixed pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 rounded-full transition-[width,height,background-color,border-color] duration-300 ease-out flex items-center justify-center"
+        className="fixed pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 rounded-full flex items-center justify-center"
         style={{
-          width: size,
-          height: size,
-          backgroundColor: isProject ? "hsl(0 0% 95% / 0.9)" : "transparent",
-          border: isProject ? "none" : "1px solid hsl(0 0% 95% / 0.5)",
-          mixBlendMode: isProject ? "difference" : "difference",
+          width: cursorSize,
+          height: cursorSize,
+          backgroundColor: isProject ? "hsl(var(--foreground))" : "transparent",
+          border: isProject ? "none" : `1px solid hsl(var(--foreground) / ${isHovering ? 0.6 : 0.4})`,
+          mixBlendMode: "difference",
+          transition: "width 0.4s cubic-bezier(0.23,1,0.32,1), height 0.4s cubic-bezier(0.23,1,0.32,1), background-color 0.3s ease, border 0.3s ease",
         }}
       >
         <span
-          ref={cursorTextRef}
-          className="text-xs font-body tracking-[0.15em] uppercase transition-opacity duration-300 select-none"
+          className="text-[10px] font-body tracking-[0.2em] uppercase select-none"
           style={{
             opacity: isProject ? 1 : 0,
-            color: "hsl(0 0% 5%)",
-            fontSize: "11px",
+            color: "hsl(var(--background))",
             fontWeight: 500,
+            transition: "opacity 0.3s ease",
           }}
         >
           VIEW
         </span>
       </div>
+      {/* Small precise dot */}
       <div
         ref={cursorDotRef}
-        className="fixed pointer-events-none z-[9999] -translate-x-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-foreground rounded-full transition-opacity duration-300"
-        style={{ opacity: isProject ? 0 : 1 }}
+        className="fixed pointer-events-none z-[10000] -translate-x-1/2 -translate-y-1/2 rounded-full"
+        style={{
+          width: 5,
+          height: 5,
+          backgroundColor: "hsl(var(--foreground))",
+          opacity: isProject ? 0 : 1,
+          transition: "opacity 0.3s ease",
+        }}
       />
     </>
   );
