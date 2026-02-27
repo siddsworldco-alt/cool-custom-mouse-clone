@@ -4,7 +4,9 @@ const ContactSection = () => {
       <div className="flex flex-col items-center text-center">
         <h2 className="section-label mb-8">Get in touch</h2>
         <a
-          href="mailto:hello@billieduvalle.com"
+          href="https://www.upwork.com/freelancers/siddsy"
+          target="_blank"
+          rel="noopener noreferrer"
           className="text-5xl md:text-8xl font-display text-foreground transition-opacity duration-300 hover:opacity-60"
           data-cursor-hover
         >
@@ -12,11 +14,11 @@ const ContactSection = () => {
         </a>
       </div>
       <div className="flex flex-col md:flex-row justify-between items-center mt-20 text-xs text-muted-foreground gap-4">
-        <span>© 2024 Billie Duvalle</span>
+        <span>© 2025 Siddharth Nayak</span>
         <div className="flex gap-6">
-          <a href="#" className="nav-link">Instagram</a>
-          <a href="#" className="nav-link">Dribbble</a>
+          <a href="https://www.upwork.com/freelancers/siddsy" target="_blank" rel="noopener noreferrer" className="nav-link">Upwork</a>
           <a href="#" className="nav-link">LinkedIn</a>
+          <a href="#" className="nav-link">GitHub</a>
         </div>
       </div>
     </section>
